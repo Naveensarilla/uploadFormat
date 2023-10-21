@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import './App.css';
+import ImageList from './ImageList';
 function App() {
   const [file, setFile] = useState(null);
   const handleFileChange = (e) => {
@@ -26,6 +27,10 @@ function App() {
       <h1>Document Image Uploader</h1>
       <input type="file" accept=".docx" onChange={handleFileChange} />
       <button onClick={handleUpload}>Upload</button>
+
+
+
+      <ImageList/>
     </div>
   );
 }
