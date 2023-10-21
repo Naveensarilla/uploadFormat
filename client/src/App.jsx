@@ -9,6 +9,8 @@ function App() {
   };
   const handleUpload = () => {
     const formData = new FormData();
+    formData.append('question_text', 'Your Question Text Here');
+formData.append('answer_text', 'Your Answer Text Here');
     formData.append('document', file);
     fetch('http://localhost:5030/upload', {
       method: 'POST',
