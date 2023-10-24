@@ -90,8 +90,8 @@ const port = 5030;
 const db = mysql.createConnection({
     host: "localhost",
     user: "root",
-    password: "naveen",
-    database: "uploaded",
+    password: "Ks@9494270722",
+    database: "folderupload",
 });
 
 db.connect((err) => {
