@@ -125,6 +125,7 @@ const Adminproject = () => {
           .then((response) => response.text())
           .then((result) => {
             console.log(result);
+            alert('done')
           })
           .catch((error) => {
             console.error(error);
