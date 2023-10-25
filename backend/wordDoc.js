@@ -106,48 +106,48 @@ app.get('/quiz_topics/:unit_id', (req, res) => {
 
 // working main code =================================================================
 
-// app.post('/upload', upload.single('document'), async (req, res) => {
-//     const docxFilePath = `uploads/${req.file.filename}`;
-//     const outputDir = `uploads/${req.file.originalname}_images`;
-//     const topic_id= req.body.topic_id;
-//     if (!fs.existsSync(outputDir)) {
-//       fs.mkdirSync(outputDir);
-//     }
+app.post('/upload', upload.single('document'), async (req, res) => {
+    const docxFilePath = `uploads/${req.file.filename}`;
+    const outputDir = `uploads/${req.file.originalname}_images`;
+    const topic_id= req.body.topic_id;
+    if (!fs.existsSync(outputDir)) {
+      fs.mkdirSync(outputDir);
+    }
   
-//     // Assuming the selected topic IDs are sent in the request body as an array
-//     // const selectedTopicIds = req.body.selectedTopicIds;
+    // Assuming the selected topic IDs are sent in the request body as an array
+    // const selectedTopicIds = req.body.selectedTopicIds;
   
-//     try {
-//       const result = await mammoth.convertToHtml({ path: docxFilePath });
-//       const htmlContent = result.value;
-//       const $ = cheerio.load(htmlContent);
+    try {
+      const result = await mammoth.convertToHtml({ path: docxFilePath });
+      const htmlContent = result.value;
+      const $ = cheerio.load(htmlContent);
   
-//       $('img').each(async function (i, element) {
-//         const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
-//         const imageBuffer = Buffer.from(base64Data, 'base64');
+      $('img').each(async function (i, element) {
+        const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
+        const imageBuffer = Buffer.from(base64Data, 'base64');
   
-//         try {
-//           // Insert the image data and the selected topic ID into the image table
-//         //   for (const topicId of selectedTopicIds) {
-//         //     await connection.query('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
-//         //   }
-//         await connection.execute('INSERT INTO images (image_data,topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
-//         console.log('Image inserted successfully');
-//         } catch (error) {
-//             console.error('Error inserting image data:', error);
-//           res.status(500).send('Error inserting image data into the database.');
-//           return;
-//         }
-//       });
+        try {
+          // Insert the image data and the selected topic ID into the image table
+          for (const topicId of selectedTopicIds) {
+            await connection.query('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
+          }
+        await connection.execute('INSERT INTO images (image_data,topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
+        console.log('Image inserted successfully');
+        } catch (error) {
+            console.error('Error inserting image data:', error);
+          res.status(500).send('Error inserting image data into the database.');
+          return;
+        }
+      });
   
-//       // No need to close the connection here
+      // No need to close the connection here
   
-//       res.send('Images extracted and saved to the database with selected topic IDs successfully.');
-//     } catch (error) {
-//       console.error(error);
-//       res.status(500).send('Error extracting images and saving to the database.');
-//     }
-//   });
+      res.send('Images extracted and saved to the database with selected topic IDs successfully.');
+    } catch (error) {
+      console.error(error);
+      res.status(500).send('Error extracting images and saving to the database.');
+    }
+  });
 
 //  end --------------------------------------------------------------------------------------------------
 
@@ -206,72 +206,72 @@ app.get('/quiz_topics/:unit_id', (req, res) => {
     // });
 
 
-app.post('/upload', upload.single('document'), async (req, res) => {
-    const docxFilePath = `uploads/${req.file.filename}`;
-    const outputDir = `uploads/${req.file.originalname}_images`;
-    const topic_id = req.body.topic_id;
+// app.post('/upload', upload.single('document'), async (req, res) => {
+//     const docxFilePath = `uploads/${req.file.filename}`;
+//     const outputDir = `uploads/${req.file.originalname}_images`;
+//     const topic_id = req.body.topic_id;
 
-    if (!fs.existsSync(outputDir)) {
-        fs.mkdirSync(outputDir);
-    }
+//     if (!fs.existsSync(outputDir)) {
+//         fs.mkdirSync(outputDir);
+//     }
 
-    try {
-        const result = await mammoth.convertToHtml({ path: docxFilePath });
-        const htmlContent = result.value;
-        const $ = cheerio.load(htmlContent);
+//     try {
+//         const result = await mammoth.convertToHtml({ path: docxFilePath });
+//         const htmlContent = result.value;
+//         const $ = cheerio.load(htmlContent);
 
-        // Define the total number of sets and images per set
-        const totalImages = $('img').length;
-        const imagesPerSet = 6;
+//         // Define the total number of sets and images per set
+//         const totalImages = $('img').length;
+//         const imagesPerSet = 6;
 
-        for (let setIndex = 0; setIndex < imagesPerSet; setIndex++) {
-            const imgIndex = setIndex;
-            const imgElement = $(`img:eq(${imgIndex})`);
+//         for (let setIndex = 0; setIndex < imagesPerSet; setIndex++) {
+//             const imgIndex = setIndex;
+//             const imgElement = $(`img:eq(${imgIndex})`);
 
-            if (imgElement.length > 0) {
-                const base64Data = imgElement.attr('src').replace(/^data:image\/\w+;base64,/, '');
-                const imageBuffer = Buffer.from(base64Data, 'base64');
+//             if (imgElement.length > 0) {
+//                 const base64Data = imgElement.attr('src').replace(/^data:image\/\w+;base64,/, '');
+//                 const imageBuffer = Buffer.from(base64Data, 'base64');
 
-                try {
-                    // Insert the image into the database
-                    await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
-                    console.log('Image inserted successfully');
-                } catch (error) {
-                    console.error('Error inserting image data:', error);
-                    res.status(500).send('Error inserting image data into the database.');
-                    return;
-                }
-            }
-        }
-        const selectImagesQuery = 'SELECT * FROM images WHERE id MOD 8 = 1';
+//                 try {
+//                     // Insert the image into the database
+//                     await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
+//                     console.log('Image inserted successfully');
+//                 } catch (error) {
+//                     console.error('Error inserting image data:', error);
+//                     res.status(500).send('Error inserting image data into the database.');
+//                     return;
+//                 }
+//             }
+//         }
+//         const selectImagesQuery = 'SELECT * FROM images WHERE id MOD 8 = 1';
 
-connection.query(selectImagesQuery, (error, results, fields) => {
-  if (error) {
-    console.error('Error selecting images: ' + error);
-  } else {
-    const imagesToInsert = results;
+// connection.query(selectImagesQuery, (error, results, fields) => {
+//   if (error) {
+//     console.error('Error selecting images: ' + error);
+//   } else {
+//     const imagesToInsert = results;
 
-    // SQL query to insert selected images into the Questions table
-    const insertQuestionsQuery = 'INSERT INTO Questions (image_data) VALUES ?';
+//     // SQL query to insert selected images into the Questions table
+//     const insertQuestionsQuery = 'INSERT INTO Questions (image_data) VALUES ?';
 
-    connection.query(insertQuestionsQuery, [imagesToInsert.map(image => [image.image_data])], (err, results) => {
-      if (err) {
-        console.error('Error inserting images into Questions: ' + err);
-      } else {
-        console.log('Images inserted into Questions table.');
-      }
-      // Close the database connection
-      connection.end();
-    });
-  }
-});
+//     connection.query(insertQuestionsQuery, [imagesToInsert.map(image => [image.image_data])], (err, results) => {
+//       if (err) {
+//         console.error('Error inserting images into Questions: ' + err);
+//       } else {
+//         console.log('Images inserted into Questions table.');
+//       }
+//       // Close the database connection
+//       connection.end();
+//     });
+//   }
+// });
 
-        res.send('Images extracted and saved to the database in sets successfully.');
-    } catch (error) {
-        console.error(error);
-        res.status(500).send('Error extracting images and saving to the database.');
-    }
-});
+//         res.send('Images extracted and saved to the database in sets successfully.');
+//     } catch (error) {
+//         console.error(error);
+//         res.status(500).send('Error extracting images and saving to the database.');
+//     }
+// });
 
 
 
