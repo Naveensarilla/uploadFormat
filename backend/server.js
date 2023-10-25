@@ -11,7 +11,7 @@ const port = 4007;
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: 'naveen',
+  password: '',
   database: 'egquizdatabase',
 };
 
