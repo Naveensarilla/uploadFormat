@@ -146,71 +146,113 @@ app.get('/quiz_topics/:unit_id', (req, res) => {
 //     }
 //   });
 
+// app.post('/upload', upload.single('document'), async (req, res) => {
+//   const docxFilePath = `uploads/${req.file.filename}`;
+//   const outputDir = `uploads/${req.file.originalname}_images`;
+//   const topic_id = req.body.topic_id;
+
+//   if (!fs.existsSync(outputDir)) {
+//     fs.mkdirSync(outputDir);
+//   }
+
+//   try {
+//     const result = await mammoth.convertToHtml({ path: docxFilePath });
+//     const htmlContent = result.value;
+//     const $ = cheerio.load(htmlContent);
+//     const textResult = await mammoth.extractRawText({ path: docxFilePath });
+//     const textContent = textResult.value;
+
+//     // Split the text into sections based on a delimiter, e.g., paragraph separation.
+//     // Assuming paragraphs are separated by double line breaks.
+//     const textSections = textContent.split('\n\n');
+
+//     // Get all images in the order they appear in the HTML
+//     const images = [];
+//     $('img').each(function (i, element) {
+//       const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
+//       const imageBuffer = Buffer.from(base64Data, 'base64');
+//       images.push(imageBuffer);
+//     });
+
+//     // Store both text and images in the same order
+//     const contentArray = [];
+//     for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
+//       if (i < images.length) {
+//         contentArray.push({ type: 'image', data: images[i] });
+//       }
+//       if (i < textSections.length) {
+//         contentArray.push({ type: 'text', data: textSections[i] });
+//       }
+//     }
+
+//     // Save content in the same order
+//     for (const contentItem of contentArray) {
+//       try {
+//         if (contentItem.type === 'image') {
+//           // Insert the image data into the 'images' table
+//           await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [contentItem.data, topic_id]);
+//         } else if (contentItem.type === 'text') {
+//           // Insert the text content into the 'images' table
+//           await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [contentItem.data, topic_id]);
+//         }
+//         console.log(`${contentItem.type} content inserted successfully`);
+//       } catch (error) {
+//         console.error(`Error inserting ${contentItem.type} content:`, error);
+//         res.status(500).send(`Error inserting ${contentItem.type} content into the database.`);
+//         return;
+//       }
+//     }
+
+//     res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
+//   } catch (error) {
+//     console.error(error);
+//     res.status(500).send('Error extracting content and saving it to the database.');
+//   }
+// });
+
+  
 app.post('/upload', upload.single('document'), async (req, res) => {
   const docxFilePath = `uploads/${req.file.filename}`;
   const outputDir = `uploads/${req.file.originalname}_images`;
-  const topic_id = req.body.topic_id;
-
+  const topic_id= req.body.topic_id;
   if (!fs.existsSync(outputDir)) {
     fs.mkdirSync(outputDir);
   }
+
+  // Assuming the selected topic IDs are sent in the request body as an array
+  // const selectedTopicIds = req.body.selectedTopicIds;
 
   try {
     const result = await mammoth.convertToHtml({ path: docxFilePath });
     const htmlContent = result.value;
     const $ = cheerio.load(htmlContent);
-    const textResult = await mammoth.extractRawText({ path: docxFilePath });
-    const textContent = textResult.value;
 
-    // Split the text into sections based on a delimiter, e.g., paragraph separation.
-    // Assuming paragraphs are separated by double line breaks.
-    const textSections = textContent.split('\n\n');
-
-    // Get all images in the order they appear in the HTML
-    const images = [];
-    $('img').each(function (i, element) {
+    $('img').each(async function (i, element) {
       const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
       const imageBuffer = Buffer.from(base64Data, 'base64');
-      images.push(imageBuffer);
-    });
 
-    // Store both text and images in the same order
-    const contentArray = [];
-    for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
-      if (i < images.length) {
-        contentArray.push({ type: 'image', data: images[i] });
-      }
-      if (i < textSections.length) {
-        contentArray.push({ type: 'text', data: textSections[i] });
-      }
-    }
-
-    // Save content in the same order
-    for (const contentItem of contentArray) {
       try {
-        if (contentItem.type === 'image') {
-          // Insert the image data into the 'images' table
-          await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [contentItem.data, topic_id]);
-        } else if (contentItem.type === 'text') {
-          // Insert the text content into the 'images' table
-          await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [contentItem.data, topic_id]);
-        }
-        console.log(`${contentItem.type} content inserted successfully`);
+        // Insert the image data and the selected topic ID into the image table
+      //   for (const topicId of selectedTopicIds) {
+      //     await connection.query('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
+      //   }
+      await connection.execute('INSERT INTO images (image_data,topic_id) VALUES (?, ?)', [imageBuffer, topic_id]);
+      console.log('Image inserted successfully');
       } catch (error) {
-        console.error(`Error inserting ${contentItem.type} content:`, error);
-        res.status(500).send(`Error inserting ${contentItem.type} content into the database.`);
+          console.error('Error inserting image data:', error);
+        res.status(500).send('Error inserting image data into the database.');
         return;
       }
-    }
+    });
 
-    res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
+    // No need to close the connection here
+
+    res.send('Images extracted and saved to the database with selected topic IDs successfully.');
   } catch (error) {
     console.error(error);
-    res.status(500).send('Error extracting content and saving it to the database.');
+    res.status(500).send('Error extracting images and saving to the database.');
   }
 });
-
-  
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });

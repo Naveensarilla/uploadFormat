@@ -146,8 +146,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
     }
   });
 
-<<<<<<< HEAD
-=======
+
 //  end --------------------------------------------------------------------------------------------------
 
 
@@ -357,7 +356,6 @@ app.post('/upload', upload.single('document'), async (req, res) => {
   
 
   
->>>>>>> aae8dae9b452032afd000153b285377a6ddcf2d5
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
