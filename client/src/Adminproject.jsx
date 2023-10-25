@@ -125,7 +125,7 @@ const Adminproject = () => {
           .then((response) => response.text())
           .then((result) => {
             console.log(result);
-            alert('done')
+            alert('suscefully uploded Document')
           })
           .catch((error) => {
             console.error(error);
