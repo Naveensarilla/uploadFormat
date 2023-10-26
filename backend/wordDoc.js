@@ -11,7 +11,7 @@ const port = 4007;
 const dbConfig = {
   host: 'localhost',
   user: 'root',
-  password: 'naveen',
+  password: '',
   database: 'egquizdatabase',
 };
 
@@ -146,6 +146,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
       res.status(500).send('Error extracting images and saving to the database.');
     }
   });
+
 
 //  end --------------------------------------------------------------------------------------------------
 
@@ -391,6 +392,7 @@ for (let i = 4; i < Math.max(textSections.length, images.length); i++) {
   });
   
   
+
 
 app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
