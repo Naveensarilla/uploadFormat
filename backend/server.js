@@ -136,7 +136,7 @@ app.get('/quiz_topics/:unit_id', (req, res) => {
 //           return;
 //         }
 //       });
-  
+
 //       // No need to close the connection here
   
 //       res.send('Images extracted and saved to the database with selected topic IDs successfully.');
@@ -287,7 +287,6 @@ if (i < textSections.length) {
 }
 }
 
-
 for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
 if (i < images.length) {
   if (i % 5 === 0) {
@@ -317,18 +316,6 @@ app.listen(port, () => {
   console.log(`Server is running on http://localhost:${port}`);
 });
 
-
-
-
-
-
-
-
-
-
-
-
-
 // const express = require('express');
 // const multer = require('multer');
 // const cors = require('cors');
@@ -339,7 +326,6 @@ app.listen(port, () => {
 // const app = express();
 
 // const port = 5030;
-
 
 // const db = mysql.createConnection({
 //     host: "localhost",
@@ -391,18 +377,10 @@ app.listen(port, () => {
 //     }
 // });
 
-
 // app.listen(port, () => {
 //     console.log(`Server is running on port ${port}`);
 
 // });
-
-
-
-
-
-
-
 
 // const express = require('express');
 // const multer = require('multer');
@@ -557,7 +535,6 @@ app.listen(port, () => {
 // // Start by fetching image data from the database
 // fetchImageData();
 
-
 // app.get('/img', (req, res) => {
 //     // Query the database to fetch images
 //     const selectImagesSql = 'SELECT * FROM Images';
@@ -582,11 +559,6 @@ app.listen(port, () => {
 // app.listen(port, () => {
 //     console.log(`Server is running on port ${port}`);
 // });
-
-
-
-
-
 
 // const express = require('express');
 // const multer = require('multer');
@@ -668,7 +640,8 @@ app.listen(port, () => {
 // //         res.status(500).send('Error extracting images.');
 // //     }
 // // });
-// // end ===========================================================================================
+
+// // end==============================================================================================================
 
 // app.post('/upload', upload.single('document'), async (req, res) => {
 //     const docxFilePath = `uploads/${req.file.filename}`;
@@ -805,7 +778,6 @@ app.listen(port, () => {
 //     });
 // });
 
-
 // app.get('/img', (req, res) => {
 //  // Use req.params.id to get the ID from the route
 
@@ -828,11 +800,9 @@ app.listen(port, () => {
 //     });
 // });
 
-
 // app.listen(port, () => {
 //     console.log(`Server is running on port ${port}`);
 // });
-
 
 // const express = require('express');
 // const multer = require('multer');
@@ -921,7 +891,6 @@ app.listen(port, () => {
 //             );
 //         }
 //     );
-
 
 //     // Check the value of 'i' and insert data into the appropriate table
 //     if (i === 1) {
