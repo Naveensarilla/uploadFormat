@@ -1,3 +1,107 @@
+const express = require('express');
+const multer = require('multer');
+const mysql = require('mysql2'); // Use mysql2 instead of mysql
+const cors = require('cors');
+const mammoth = require('mammoth');
+const fs = require('fs');
+const cheerio = require('cheerio');
+const app = express();
+const port = 4017;
+
+const dbConfig = {
+    host: 'localhost',
+    user: 'root',
+    password: 'naveen',
+    database: 'egquizdatabase',
+};
+
+const connection = mysql.createConnection(dbConfig);
+
+connection.connect((err) => {
+    if (err) {
+        console.error('Error connecting to the database: ' + err.message);
+        throw err;
+    }
+    console.log('Connected to the database');
+});
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');
+    },
+    filename: (req, file, cb) => {
+        cb(null, file.originalname);
+    },
+});
+
+const upload = multer({ storage });
+
+app.use(cors());
+
+app.get('/quiz_coures', (req, res) => {
+    const sql = 'SELECT * FROM 1egquiz_courses';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching coureses' });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+app.get('/quiz_exams/:course_id', (req, res) => {
+    const course_id = req.params.course_id;
+    const sql = 'SELECT * FROM 2egquiz_exam WHERE course_id = ?';
+    connection.query(sql, [course_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching exams' });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+app.get('/quiz_Subjects/:exam_id', (req, res) => {
+    const sql =
+        'SELECT s.subi_id, s.subject_name FROM egquiz_subindex s,3egquiz_subject t WHERE t.subi_id=s.subi_id and exam_id=?';
+    const exam_id = req.params.exam_id;
+    connection.query(sql, [exam_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching subjects' });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+app.get('/quiz_units/:subi_id', (req, res) => {
+    const subi_id = req.params.subi_id;
+    const sql = 'SELECT * FROM 4egquiz_unit WHERE subi_id=?';
+    connection.query(sql, [subi_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching topics' });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+app.get('/quiz_topics/:unit_id', (req, res) => {
+    const unit_id = req.params.unit_id;
+    const sql = 'SELECT * FROM 5egquiz_topics WHERE unit_id=?';
+    connection.query(sql, [unit_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching topics' });
+            return;
+        }
+        res.json(result);
+    });
+});
 
 app.post('/upload', upload.single('document'), async (req, res) => {
   const docxFilePath = `uploads/${req.file.filename}`;
@@ -129,4 +233,8 @@ app.post('/upload', upload.single('document'), async (req, res) => {
     console.error(error);
     res.status(500).send('Error extracting content and saving it to the database.');
   }
+});
+
+app.listen(port, () => {
+  console.log(`Server is running on http://localhost:${port}`);
 });
