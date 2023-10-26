@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 
 import './App.css';
 import ImageList from './ImageList';
+import Uploads from './Uploads';
 function App() {
   const [file, setFile] = useState(null);
   const handleFileChange = (e) => {
@@ -26,13 +27,13 @@ formData.append('answer_text', 'Your Answer Text Here');
   };
   return (
     <div className="App">
-      <h1>Document Image Uploader</h1>
+      {/* <h1>Document Image Uploader</h1>
       <input type="file" accept=".docx" onChange={handleFileChange} />
-      <button onClick={handleUpload}>Upload</button>
+      <button onClick={handleUpload}>Upload</button> */}
 
+<Uploads/>
 
-
-      <ImageList/>
+      {/* <ImageList/> */}
     </div>
   );
 }
