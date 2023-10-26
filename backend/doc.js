@@ -6,12 +6,12 @@ const mammoth = require('mammoth');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const app = express();
-const port = 4017;
+const port = 4007;
 
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'naveen',
+    password: '',
     database: 'egquizdatabase',
 };
 
@@ -285,11 +285,11 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     console.log(`Image content ${i} inserted successfully into images table`);
                 }
             }
-            if (i < textSections.length) {
-                // Insert the text content into the "images" table as per your original code.
-                await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-                console.log(`Text content ${i} inserted successfully into images table`);
-            }
+            // if (i < textSections.length) {
+            //     // Insert the text content into the "images" table as per your original code.
+            //     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //     console.log(`Text content ${i} inserted successfully into images table`);
+            // }
         }
         // end-------------
 
@@ -308,7 +308,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     console.log(`Image content ${i} inserted successfully into options_table table`);
                 } else {
                     // Insert the image data into the existing "images" table for the rest
-                    await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    // await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
                     console.log(`Image content ${i} inserted successfully into images table`);
                 }
 
@@ -320,11 +320,11 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     i += 2; // Increment i by 2 to skip 2 images
                 }
             }
-            if (i < textSections.length) {
-                // Insert the text content into the "images" table as per your original code.
-                await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-                console.log(`Text content ${i} inserted successfully into images table`);
-            }
+            // if (i < textSections.length) {
+            //     // Insert the text content into the "images" table as per your original code.
+            //     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //     console.log(`Text content ${i} inserted successfully into images table`);
+            // }
         }
         // end-------------
 
@@ -338,15 +338,15 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     console.log(`Image content ${i} inserted successfully into solustion table`);
                 } else {
                     // Insert the image data into the existing "images" table
-                    await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    // await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
                     console.log(`Image content ${i} inserted successfully into images table`);
                 }
             }
-            if (i < textSections.length) {
-                // Insert the text content into the "images" table as per your original code.
-                await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-                console.log(`Text content ${i} inserted successfully into images table`);
-            }
+            // if (i < textSections.length) {
+            //     // Insert the text content into the "images" table as per your original code.
+            //     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //     console.log(`Text content ${i} inserted successfully into images table`);
+            // }
         }
         // end-------------
       
