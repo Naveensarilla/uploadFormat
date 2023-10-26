@@ -6,12 +6,12 @@ const mammoth = require('mammoth');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const app = express();
-const port = 4017;
+const port = 4007;
 
 const dbConfig = {
     host: 'localhost',
     user: 'root',
-    password: 'naveen',
+    password: '',
     database: 'egquizdatabase',
 };
 
@@ -231,23 +231,15 @@ app.get('/quiz_topics/:unit_id', (req, res) => {
 
 
 
-// function extractAnswerText(text) {
-//     const ansPattern = /\[ans\](.*?)\[\/ans\]/g;
-//     const answers = [];
-//     let match;
-//     while ((match = ansPattern.exec(text)) !== null) {
-//         answers.push(match[1].trim()); // Extract text within [ans] tags
-//     }
-//     return answers;
-// }        const answerTexts = extractAnswerText(textContent);
-// for (const answer of answerTexts) {
-//     try {
-//         await connection.execute('INSERT INTO answers_table (answer_text, topic_id) VALUES (?, ?)', [answer, topic_id]);
-//         console.log('Answer text inserted successfully into answers_table');
-//     } catch (error) {
-//         console.error('Error inserting answer text:', error);
-//     }
-// }
+function extractAnswerText(text) {
+    const ansPattern = /\[ans\](.*?)\[\/ans\]/g;
+    const answers = [];
+    let match;
+    while ((match = ansPattern.exec(text)) !== null) {
+        answers.push(match[1].trim()); // Extract text within [ans] tags
+    }
+    return answers;
+}
 
 
 app.post('/upload', upload.single('document'), async (req, res) => {
@@ -279,120 +271,62 @@ app.post('/upload', upload.single('document'), async (req, res) => {
         });
 
 
-        // //   this for questions----------------------
-        // // Save content in the same order, but store every 6th image in a separate table
-        // for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
-        //     if (i < images.length) {
-        //         if (i % 6 === 0) {
-        //             // Insert the image data into a new "image_set" table
-        //             await connection.execute('INSERT INTO questions (qustion_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-        //             console.log(`Image content ${i} inserted successfully into image_set table`);
-        //         } else {
-        //             // Insert the image data into the existing "images" table
-        //             await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-        //             console.log(`Image content ${i} inserted successfully into images table`);
-        //         }
-        //     }
-        //     if (i < textSections.length) {
-        //         // Insert the text content into the "images" table as per your original code.
-        //         await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-        //         console.log(`Text content ${i} inserted successfully into images table`);
-        //     }
-        // }
-        // // end-------------
-
-
-
-        // //   this for options----------------------
-
-        // // Variable to track the current image index
-        // let currentImageIndex = 1;
-
-        // for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
-        //     if (i < images.length) {
-        //         if (currentImageIndex >= 1 && currentImageIndex <= 4) {
-        //             // Insert the image data into a new "image_set" table for the first 4 images
-        //             await connection.execute('INSERT INTO options_table (option_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-        //             console.log(`Image content ${i} inserted successfully into options_table table`);
-        //         } else {
-        //             // Insert the image data into the existing "images" table for the rest
-        //             await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-        //             console.log(`Image content ${i} inserted successfully into images table`);
-        //         }
-
-        //         currentImageIndex += 1; // Increment the current image index
-
-        //         // After the 4th image, reset the counter to insert images with an increment of 2
-        //         if (currentImageIndex === 5) {
-        //             currentImageIndex = 1; // Reset to 1 to repeat the first 4 images
-        //             i += 2; // Increment i by 2 to skip 2 images
-        //         }
-        //     }
-        //     if (i < textSections.length) {
-        //         // Insert the text content into the "images" table as per your original code.
-        //         await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-        //         console.log(`Text content ${i} inserted successfully into images table`);
-        //     }
-        // }
+        //   this for questions----------------------
+        // Save content in the same order, but store every 6th image in a separate table
+        for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
+            if (i < images.length) {
+                if (i % 6 === 0) {
+                    // Insert the image data into a new "image_set" table
+                    await connection.execute('INSERT INTO questions (qustion_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    console.log(`Image content ${i} inserted successfully into image_set table`);
+                } else {
+                    // Insert the image data into the existing "images" table
+                    await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    console.log(`Image content ${i} inserted successfully into images table`);
+                }
+            }
+            // if (i < textSections.length) {
+            //     // Insert the text content into the "images" table as per your original code.
+            //     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //     console.log(`Text content ${i} inserted successfully into images table`);
+            // }
+        }
         // end-------------
 
 
 
-        // Create a variable to keep track of the current question id
-let currentQuestionId = 0;
+        //   this for options----------------------
 
-for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
-    if (i < images.length) {
-        if (i % 6 === 0) {
-            // Increment the question id for a new question
-            currentQuestionId++;
+        // Variable to track the current image index
+        let currentImageIndex = 1;
 
-            // Insert the image data into the "image_set" table with the current question id
-            await connection.execute('INSERT INTO questions (id, qustion_data, topic_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], topic_id]);
-            console.log(`Image content ${i} inserted successfully into image_set table for question id ${currentQuestionId}`);
-        } else {
-            // Insert the image data into the existing "images" table
-            await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-            console.log(`Image content ${i} inserted successfully into images table`);
+        for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
+            if (i < images.length) {
+                if (currentImageIndex >= 1 && currentImageIndex <= 4) {
+                    // Insert the image data into a new "image_set" table for the first 4 images
+                    await connection.execute('INSERT INTO options_table (option_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    console.log(`Image content ${i} inserted successfully into options_table table`);
+                } else {
+                    // Insert the image data into the existing "images" table for the rest
+                    // await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    console.log(`Image content ${i} inserted successfully into images table`);
+                }
+
+                currentImageIndex += 1; // Increment the current image index
+
+                // After the 4th image, reset the counter to insert images with an increment of 2
+                if (currentImageIndex === 5) {
+                    currentImageIndex = 1; // Reset to 1 to repeat the first 4 images
+                    i += 2; // Increment i by 2 to skip 2 images
+                }
+            }
+            // if (i < textSections.length) {
+            //     // Insert the text content into the "images" table as per your original code.
+            //     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //     console.log(`Text content ${i} inserted successfully into images table`);
+            // }
         }
-    }
-    if (i < textSections.length) {
-        // Insert the text content into the "images" table as per your original code.
-        await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-        console.log(`Text content ${i} inserted successfully into images table`);
-    }
-}
-
-// Reset the current image index for options
-let currentImageIndex = 1;
-
-for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
-    if (i < images.length) {
-        if (currentImageIndex >= 1 && currentImageIndex <= 4) {
-            // Insert the image data into the "options_table" with the current question id
-            await connection.execute('INSERT INTO options_table (id, option_data, topic_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], topic_id]);
-            console.log(`Image content ${i} inserted successfully into options_table for question id ${currentQuestionId}`);
-        } else {
-            // Insert the image data into the existing "images" table
-            await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-            console.log(`Image content ${i} inserted successfully into images table`);
-        }
-
-        currentImageIndex += 1; // Increment the current image index
-
-        // After the 4th image, reset the counter to insert images with an increment of 2
-        if (currentImageIndex === 5) {
-            currentImageIndex = 1; // Reset to 1 to repeat the first 4 images
-            i += 2; // Increment i by 2 to skip 2 images
-        }
-    }
-    if (i < textSections.length) {
-        // Insert the text content into the "images" table as per your original code.
-        await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-        console.log(`Text content ${i} inserted successfully into images table`);
-    }
-}
-
+        // end-------------
 
         //   this for solustion----------------------
 
@@ -404,36 +338,30 @@ for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
                     console.log(`Image content ${i} inserted successfully into solustion table`);
                 } else {
                     // Insert the image data into the existing "images" table
-                    await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    // await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
                     console.log(`Image content ${i} inserted successfully into images table`);
                 }
             }
-            if (i < textSections.length) {
-                // Insert the text content into the "images" table as per your original code.
-                await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-                console.log(`Text content ${i} inserted successfully into images table`);
-            }
+            // if (i < textSections.length) {
+            //     // Insert the text content into the "images" table as per your original code.
+            //     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //     console.log(`Text content ${i} inserted successfully into images table`);
+            // }
         }
         // end-------------
+      
+        // Extract and insert answer text
 
-        // Extract and insert answer text
-        // Extract and insert answer text
-        const ansPattern = /\[ans\](.*?)\[\/ans\]/g;
-        const answers = [];
-        let match;
         
-        while ((match = ansPattern.exec(textContent)) !== null) {
-            answers.push(match[1].trim()); // Extract text within [ans] tags
-        }
-        
-        for (const answer of answers) {
-            try {
-                await connection.execute('INSERT INTO answer_text_table (answer_text, topic_id) VALUES (?, ?)', [answer, topic_id]);
-                console.log(`Answer text '${answer}' inserted successfully into answer_text_table for topic ${topic_id}`);
-            } catch (error) {
-                console.error(`Error inserting answer text '${answer}':`, error);
-            }
-        }
+        const answerTexts = extractAnswerText(textContent);
+for (const answer of answerTexts) {
+    try {
+        await connection.execute('INSERT INTO answers_table (answer_text, topic_id) VALUES (?, ?)', [answer, topic_id]);
+        console.log('Answer text inserted successfully into answers_table');
+    } catch (error) {
+        console.error('Error inserting answer text:', error);
+    }
+}
 
         res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
     } catch (error) {
@@ -441,6 +369,11 @@ for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
         res.status(500).send('Error extracting content and saving it to the database.');
     }
 });
+
+
+
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
