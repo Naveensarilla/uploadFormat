@@ -118,7 +118,7 @@ const Uploads = () => {
         const formData = new FormData();
         formData.append('document', file);
         formData.append('topic_id', selectedTopicId);
-        fetch('http://localhost:4017/upload', {
+        fetch('http://localhost:4007/upload', {
           method: 'POST',
           body: formData,
         })

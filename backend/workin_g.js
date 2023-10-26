@@ -6,7 +6,7 @@ const mammoth = require('mammoth');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const app = express();
-const port = 4017;
+const port = 4007;
 
 const dbConfig = {
     host: 'localhost',
