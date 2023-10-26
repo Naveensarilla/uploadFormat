@@ -250,7 +250,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
 //   });
 
 
-
+//questions 
 app.post('/upload', upload.single('document'), async (req, res) => {
     const docxFilePath = `uploads/${req.file.filename}`;
     const outputDir = `uploads/${req.file.originalname}_images`;
@@ -300,6 +300,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
       }
 
   
+//OPTIONS
 
 // Variable to track the current image index
 let currentImageIndex = 1;
@@ -331,7 +332,7 @@ for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
   }
 }
 
-
+//solution 
 for (let i = 4; i < Math.max(textSections.length, images.length); i++) {
     if (i < images.length) {
       if ((i - 4) % 5 === 0) {
