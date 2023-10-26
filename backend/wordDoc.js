@@ -331,10 +331,11 @@ for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
   }
 }
 
-for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
+
+for (let i = 4; i < Math.max(textSections.length, images.length); i++) {
     if (i < images.length) {
-      if (i % 5 === 0) {
-        // Insert the image data into a new "image_set" table
+      if ((i - 4) % 5 === 0) {
+        // Insert the image data into a new "solustion" table for every 5th image
         await connection.execute('INSERT INTO solustion (solustion_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
         console.log(`Image content ${i} inserted successfully into solustion table`);
       } else {
@@ -349,6 +350,7 @@ for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
       console.log(`Text content ${i} inserted successfully into images table`);
     }
   }
+  
 
 
 // let imageSetCounter = 0; // Initialize a counter

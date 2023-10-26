@@ -82,10 +82,33 @@ for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
     console.log(`Text content ${i} inserted successfully into images table`);
   }
 }
-for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
+
+
+
+// for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
+//   if (i < images.length) {
+//     if (i % 5 === 0) {
+//       // Insert the image data into a new "image_set" table
+//       await connection.execute('INSERT INTO solustion (solustion_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+//       console.log(`Image content ${i} inserted successfully into solustion table`);
+//     } else {
+//       // Insert the image data into the existing "images" table
+//       await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+//       console.log(`Image content ${i} inserted successfully into images table`);
+//     }
+//   }
+//   if (i < textSections.length) {
+//     // Insert the text content into the "images" table as per your original code.
+//     await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+//     console.log(`Text content ${i} inserted successfully into images table`);
+//   }
+// }
+
+
+for (let i = 4; i < Math.max(textSections.length, images.length); i++) {
   if (i < images.length) {
-    if (i % 5 === 0) {
-      // Insert the image data into a new "image_set" table
+    if ((i - 4) % 5 === 0) {
+      // Insert the image data into a new "solustion" table for every 5th image
       await connection.execute('INSERT INTO solustion (solustion_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
       console.log(`Image content ${i} inserted successfully into solustion table`);
     } else {
@@ -100,7 +123,6 @@ for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
     console.log(`Text content ${i} inserted successfully into images table`);
   }
 }
-
 
 
       res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
