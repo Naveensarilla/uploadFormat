@@ -433,6 +433,45 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     console.log(`Text content ${i} inserted successfully into images table`);
                 }
             }
+            // if (i < textSections.length) {
+            //     // Check for answer text marked with [ans]
+            //     if (textSections[i].trim().startsWith('[qtype]')) {
+            //         // Extract and store the answer text in the "answers_table"
+            //         const answerText = textSections[i].trim().replace('[qtype]', '');
+            //         await connection.execute('INSERT INTO answer_text_table (qtype, topic_id) VALUES (?, ?)', [answerText, topic_id]);
+            //         console.log(`Answer text '${answerText}' inserted successfully into answer_text_table for topic ${topic_id}`);
+            //     } else {
+            //         // Insert the text content into the "images" table as per your original code.
+            //         await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //         console.log(`Text content ${i} inserted successfully into images table`);
+            //     }
+            // }
+            // if (i < textSections.length) {
+            //     // Check for answer text marked with [ans]
+            //     if (textSections[i].trim().startsWith('[Marks]')) {
+            //         // Extract and store the answer text in the "answers_table"
+            //         const answerText = textSections[i].trim().replace('[Marks]', '');
+            //         await connection.execute('INSERT INTO answer_text_table (Marks, topic_id) VALUES (?, ?)', [answerText, topic_id]);
+            //         console.log(`Answer text '${answerText}' inserted successfully into answer_text_table for topic ${topic_id}`);
+            //     } else {
+            //         // Insert the text content into the "images" table as per your original code.
+            //         await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //         console.log(`Text content ${i} inserted successfully into images table`);
+            //     }
+            // }
+            // if (i < textSections.length) {
+            //     // Check for answer text marked with [ans]
+            //     if (textSections[i].trim().startsWith('[sortid]')) {
+            //         // Extract and store the answer text in the "answers_table"
+            //         const answerText = textSections[i].trim().replace('[sortid]', '');
+            //         await connection.execute('INSERT INTO answer_text_table (sortid, topic_id) VALUES (?, ?)', [answerText, topic_id]);
+            //         console.log(`Answer text '${answerText}' inserted successfully into answer_text_table for topic ${topic_id}`);
+            //     } else {
+            //         // Insert the text content into the "images" table as per your original code.
+            //         await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+            //         console.log(`Text content ${i} inserted successfully into images table`);
+            //     }
+            // }
         }
 
         let currentImageIndex = 1;
