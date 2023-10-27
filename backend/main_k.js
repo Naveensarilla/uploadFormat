@@ -343,7 +343,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
             if (i < images.length) {
                 if (i % 6 === 0) {
                     currentQuestionId++;
-        
+
                     // Insert the image data into the "questions" table with the current question id
                     await connection.execute('INSERT INTO questions (id, qustion_data, topic_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], topic_id]);
                     console.log(`Question content ${i} inserted successfully into questions table for question id ${currentQuestionId}`);
@@ -353,16 +353,16 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     console.log(`Image content ${i} inserted successfully into images table`);
                 }
             }
-        
+
             if (i < textSections.length) {
                 await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
                 console.log(`Text content ${i} inserted successfully into images table`);
             }
         }
-        
+
         let currentImageIndex = 1;
         let currentSetQuestionId = 1; // Initialize currentSetQuestionId
-        
+
         for (let i = 1; i < Math.max(textSections.length, images.length); i++) {
             if (i < images.length) {
                 if (currentImageIndex >= 1 && currentImageIndex <= 4) {
@@ -374,22 +374,18 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
                     console.log(`Image content ${i} inserted successfully into images table`);
                 }
-        
+
                 currentImageIndex += 1; // Increment the current image index
-        
+
                 if (currentImageIndex === 5) {
                     currentImageIndex = 1; // Reset to 1 to repeat the first 4 images
                     i += 2; // Increment i by 2 to skip 2 images
-        
+
                     // Increment currentSetQuestionId only once for every set of 4 options
                     currentSetQuestionId++;
                 }
             }
         }
-        
-
-        
-
 
         //   this for solustion----------------------
 
@@ -414,29 +410,29 @@ app.post('/upload', upload.single('document'), async (req, res) => {
 
         let currentSet_QuestionId = 1; // Initialize currentSetQuestionId
 
-for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
-    if (i < images.length) {
-        if (i >= 5 && (i - 5) % 6 === 0) {
-            // Insert the image data into a new "solustion" table for every 5th image
-            await connection.execute('INSERT INTO solustion (qustion_id, solustion_data, topic_id) VALUES (?, ?, ?)', [currentSet_QuestionId, images[i], topic_id]);
-            console.log(`Image content ${i} inserted successfully into solustion table for question id ${currentSet_QuestionId}`);
-        } else {
-            // Insert the image data into the existing "images" table
-            await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
-            console.log(`Image content ${i} inserted successfully into images table`);
-        }
-    }
-    if (i < textSections.length) {
-        // Insert the text content into the "images" table as per your original code.
-        await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
-        console.log(`Text content ${i} inserted successfully into images table`);
-    }
+        for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
+            if (i < images.length) {
+                if (i >= 5 && (i - 5) % 6 === 0) {
+                    // Insert the image data into a new "solustion" table for every 5th image
+                    await connection.execute('INSERT INTO solustion (qustion_id, solustion_data, topic_id) VALUES (?, ?, ?)', [currentSet_QuestionId, images[i], topic_id]);
+                    console.log(`Image content ${i} inserted successfully into solustion table for question id ${currentSet_QuestionId}`);
+                } else {
+                    // Insert the image data into the existing "images" table
+                    await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+                    console.log(`Image content ${i} inserted successfully into images table`);
+                }
+            }
+            if (i < textSections.length) {
+                // Insert the text content into the "images" table as per your original code.
+                await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+                console.log(`Text content ${i} inserted successfully into images table`);
+            }
 
-    // Increment currentSetQuestionId for every set of 5 images
-    if (i >= 5 && (i - 5) % 6 === 0) {
-        currentSet_QuestionId++;
-    }
-}
+            // Increment currentSetQuestionId for every set of 5 images
+            if (i >= 5 && (i - 5) % 6 === 0) {
+                currentSet_QuestionId++;
+            }
+        }
 
         // end-------------
 

@@ -151,12 +151,6 @@ app.post('/upload', upload.single('document'), async (req, res) => {
       }
     }
 
-
-
-
-
-
-
     // Variable to track the current image index
     let currentImageIndex = 1;
 
@@ -187,8 +181,6 @@ app.post('/upload', upload.single('document'), async (req, res) => {
       }
     }
 
-
-
     // for (let i = 5; i < Math.max(textSections.length, images.length); i++) {
     //   if (i < images.length) {
     //     if (i % 5 === 0) {
@@ -207,7 +199,6 @@ app.post('/upload', upload.single('document'), async (req, res) => {
     //     console.log(`Text content ${i} inserted successfully into images table`);
     //   }
     // }
-
 
     for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
       if (i < images.length) {
