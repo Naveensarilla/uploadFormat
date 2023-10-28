@@ -396,8 +396,6 @@ app.listen(port, () => {
 //     }
 //   });
 
-<<<<<<< HEAD
-=======
 
 
 
@@ -549,4 +547,4 @@ for (const answer of answerTexts) {
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
 });
->>>>>>> 4d74ee85555c70f392bf5183399684265c466c95
+
