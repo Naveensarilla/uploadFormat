@@ -130,8 +130,13 @@ const handleTestChange = (event) => {
       const handleUpload = () => {
         const formData = new FormData();
         formData.append('document', file);
+<<<<<<< HEAD
         formData.append('test_id', selectedTestId);
         fetch('http://localhost:4007/upload', {
+=======
+        formData.append('topic_id', selectedTopicId);
+        fetch('http://localhost:4017/upload', {
+>>>>>>> 4d74ee85555c70f392bf5183399684265c466c95
           method: 'POST',
           body: formData,
         })

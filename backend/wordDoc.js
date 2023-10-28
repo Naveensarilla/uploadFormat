@@ -786,10 +786,10 @@ app.listen(port, () => {
 //                 const optionKey = text.charAt(1); // Extract the option letter
 //                 currentText = text.slice(3); // Remove the [a], [b], [c], or [d] marker
 //                 currentImages = optionImages[optionKey] = optionImages[optionKey] || {};
-//             } else if (text.includes('[ans]')) {
-//                 // If the paragraph contains [ans], it's an answer.
-//                 currentText = text.replace('[ans]', ''); // Remove the [ans] marker
-//                 currentImages = answerImages;
+            // } else if (text.includes('[ans]')) {
+            //     // If the paragraph contains [ans], it's an answer.
+            //     currentText = text.replace('[ans]', ''); // Remove the [ans] marker
+            //     currentImages = answerImages;
 //             } else {
 //                 // No marker, append the text based on the current context
 //                 if (currentText) {
