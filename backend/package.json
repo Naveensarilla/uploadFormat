@@ -7,7 +7,7 @@
     "test": "echo \"Error: no test specified\" && exit 1",
 
     "start": "nodemon uploadformet.js",
-    "proxy": "http://localhost:4006"
+    "proxy": "http://localhost:4007"
   },
   "keywords": [],
   "author": "",
