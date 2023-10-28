@@ -1,112 +1,33 @@
-// const express = require('express');
-// const multer = require('multer');
-// const cors = require('cors');
-// const mammoth = require('mammoth');
-// const mysql = require('mysql');
-// const fs = require('fs');
-// const cheerio = require('cheerio');
-// const app = express();
-
-// const port = 5030;
-
-
-// const db = mysql.createConnection({
-//     host: "localhost",
-//     user: "root",
-//     password: "naveen",
-//     database: "uploaded",
-//   });
-// db.connect((err) => {
-//     if (err) throw err;
-//     console.log("Connected to MySQL");
-//   });
-// app.use(cors());
-
-// const storage = multer.diskStorage({
-//     destination: (req, file, cb) => {
-//         cb(null, 'uploads/'); // Define the folder where the DOCX files will be temporarily stored.
-//     },
-//     filename: (req, file, cb) => {
-//         cb(null, file.originalname);
-//     },
-// });
-
-// const upload = multer({ storage });
-
-// app.post('/upload', upload.single('document'), async (req, res) => {
-//     const docxFilePath = `uploads/${req.file.filename}`;
-//     const outputDir = `uploads/${req.file.originalname}_images`;
-
-//     // Create a directory for saving images.
-//     if (!fs.existsSync(outputDir)) {
-//         fs.mkdirSync(outputDir);
-//     }
-//     try {
-
-//         const result = await mammoth.convertToHtml({ path: docxFilePath });
-//         const htmlContent = result.value;
-//         const $ = cheerio.load(htmlContent);
-
-//         $('img').each(function (i, element) {
-//             const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
-//             const imageBuffer = Buffer.from(base64Data, 'base64');
-//             fs.writeFileSync(`${outputDir}/image_${i}.png`, imageBuffer);
-
-//         });
-//         res.send('Images extracted and saved successfully.');
-//     } catch (error) {
-//         console.error(error);
-//         res.status(500).send('Error extracting images.');
-//     }
-// });
-
-
-// app.listen(port, () => {
-//     console.log(`Server is running on port ${port}`);
-
-// });
-
-
-
-
-
-
-
-
-
-
-
 const express = require('express');
 const multer = require('multer');
+const mysql = require('mysql2'); // Use mysql2 instead of mysql
 const cors = require('cors');
 const mammoth = require('mammoth');
-const mysql = require('mysql');
 const fs = require('fs');
 const cheerio = require('cheerio');
 const app = express();
+const port = 4007;
 
-const port = 5030;
+const dbConfig = {
+    host: 'localhost',
+    user: 'root',
+    password: '',
+    database: 'egquizdatabase',
+};
 
-const db = mysql.createConnection({
-    host: "localhost",
-    user: "root",
-    password: "Ks@9494270722",
-    database: "folderupload",
-});
+const connection = mysql.createConnection(dbConfig);
 
-db.connect((err) => {
+connection.connect((err) => {
     if (err) {
-        console.error('Error connecting to MySQL:', err);
-    } else {
-        console.log("Connected to MySQL");
+        console.error('Error connecting to the database: ' + err.message);
+        throw err;
     }
+    console.log('Connected to the database');
 });
-
-app.use(cors());
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
-        cb(null, 'uploads/'); // Define the folder where the DOCX files will be temporarily stored.
+        cb(null, 'uploads/');
     },
     filename: (req, file, cb) => {
         cb(null, file.originalname);
@@ -115,92 +36,198 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage });
 
+app.use(cors());
+
+app.get('/quiz_coures', (req, res) => {
+    const sql = 'SELECT * FROM 1egquiz_courses';
+    connection.query(sql, (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching coureses' });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+app.get('/quiz_exams/:course_id', (req, res) => {
+    const course_id = req.params.course_id;
+    const sql = 'SELECT * FROM 2egquiz_exam WHERE course_id = ?';
+    connection.query(sql, [course_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching exams' });
+            return;
+        }
+        res.json(result);
+    });
+});
+
+app.get('/quiz_Subjects/:exam_id', (req, res) => {
+    const sql =
+        'SELECT s.subi_id, s.subject_name FROM egquiz_subindex s,3egquiz_subject t WHERE t.subi_id=s.subi_id and exam_id=?';
+    const exam_id = req.params.exam_id;
+    connection.query(sql, [exam_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching subjects' });
+            return;
+        }
+        res.json(result);
+    });
+});
+app.get('/test/:subi_id', (req, res) => {
+    const subi_id = req.params.subi_id;
+    const sql = 'SELECT * FROM test WHERE subi_id=?';
+    connection.query(sql, [subi_id], (err, result) => {
+        if (err) {
+            console.error('Error querying the database: ' + err.message);
+            res.status(500).json({ error: 'Error fetching test' });
+            return;
+        }
+        res.json(result);
+    });
+});
+// app.get('/quiz_units/:subi_id', (req, res) => {
+//     const subi_id = req.params.subi_id;
+//     const sql = 'SELECT * FROM 4egquiz_unit WHERE subi_id=?';
+//     connection.query(sql, [subi_id], (err, result) => {
+//         if (err) {
+//             console.error('Error querying the database: ' + err.message);
+//             res.status(500).json({ error: 'Error fetching topics' });
+//             return;
+//         }
+//         res.json(result);
+//     });
+// });
+
+// app.get('/quiz_topics/:unit_id', (req, res) => {
+//     const unit_id = req.params.unit_id;
+//     const sql = 'SELECT * FROM 5egquiz_topics WHERE unit_id=?';
+//     connection.query(sql, [unit_id], (err, result) => {
+//         if (err) {
+//             console.error('Error querying the database: ' + err.message);
+//             res.status(500).json({ error: 'Error fetching topics' });
+//             return;
+//         }
+//         res.json(result);
+//     });
+// });
 app.post('/upload', upload.single('document'), async (req, res) => {
     const docxFilePath = `uploads/${req.file.filename}`;
-    const documentName = req.file.originalname; // Assuming you have a document name
+    const outputDir = `uploads/${req.file.originalname}_images`;
+    const test_id = req.body.test_id;
 
-    const outputDir = `uploads/${documentName}_images`;
-
-    // Create a directory for saving images.
     if (!fs.existsSync(outputDir)) {
         fs.mkdirSync(outputDir);
     }
-    
-    try {
-        // Insert the document information into the documents table
-        const insertDocumentSql = 'INSERT INTO documents (document_name) VALUES (?)';
-        const documentResult = await db.query(insertDocumentSql, [documentName]);
-        const documentId = documentResult.insertId;
 
+    try {
         const result = await mammoth.convertToHtml({ path: docxFilePath });
         const htmlContent = result.value;
         const $ = cheerio.load(htmlContent);
+        const textResult = await mammoth.extractRawText({ path: docxFilePath });
+        const textContent = textResult.value;
 
-        $('img').each(async (i, element) => {
-            const base64Data = $(element).attr('src').replace(/^data:image\/\w+;base64,/, '');
+        // Split the text into sections based on a delimiter, e.g., paragraph separation.
+        // Assuming paragraphs are separated by double line breaks.
+        const textSections = textContent.split('\n\n');
+
+        // Get all images in the order they appear in the HTML
+        const images = [];
+        $('img').each(function (i, element) {
+            const base64Data = $(this).attr('src').replace(/^data:image\/\w+;base64,/, '');
             const imageBuffer = Buffer.from(base64Data, 'base64');
-            const imageName = `image_${i}.png`;
-
-            fs.writeFileSync(`${outputDir}/${imageName}`, imageBuffer);
-
-            // Insert the image information into the images table
-            const insertImageSql = 'INSERT INTO img (document_id, image_name, image_data) VALUES (?, ?, ?)';
-            await db.query(insertImageSql, [documentId, imageName, imageBuffer]);
+            images.push(imageBuffer);
         });
 
-        res.send('Images extracted and saved successfully.');
+
+        // Create a variable to keep track of the current question id
+        let currentQuestionId = 0;
+        for (let i = 0; i < images.length; i++) {
+            if (i % 6 === 0) {
+                currentQuestionId++;
+                
+                // Insert the image data into the "questions" table with the current question id
+                await connection.execute('INSERT INTO questions(qustion_id,qustion_data,test_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], test_id]);
+                console.log(`Question content ${i} inserted successfully into questions table for question id ${currentQuestionId}`);
+            } else {
+                // Insert the image data into the existing "images" table
+                await connection.execute('INSERT INTO images (image_data, test_id) VALUES (?, ?)', [images[i], test_id]);
+                console.log(`Image content ${i} inserted successfully into images table`);
+            }
+        }
+        
+
+        let currentImageIndex = 1;
+        let currentSetQuestionId = 1; // Initialize currentSetQuestionId
+        
+        for (let i = 1; i < Math.max(images.length); i++) {
+            if (i < images.length) {
+                if (currentImageIndex >= 1 && currentImageIndex <= 4) {
+                    // Insert the image data into a new "image_set" table for the first 4 images
+                    await connection.execute('INSERT INTO options_table (qustion_id, option_data,test_id) VALUES (?, ?, ?)', [currentSetQuestionId, images[i], test_id]);
+                    console.log(`Image content ${i} inserted successfully into options_table table for question id ${currentSetQuestionId}`);
+                } else {
+                    // Insert the image data into the existing "images" table
+                    console.log(`Image content ${i} inserted successfully into images table`);
+                }
+        
+                currentImageIndex += 1; // Increment the current image index
+        
+                if (currentImageIndex === 5) {
+                    currentImageIndex = 1; // Reset to 1 to repeat the first 4 images
+                    i += 2; // Increment i by 2 to skip 2 images
+        
+                    // Increment currentSetQuestionId only once for every set of 4 options
+                    currentSetQuestionId++;
+                }
+            }
+        }
+        
+
+        let currentSet_QuestionId = 1; // Initialize currentSetQuestionId
+
+for (let i = 0; i < Math.max(images.length); i++) {
+    if (i < images.length) {
+        if (i >= 5 && (i - 5) % 6 === 0) {
+            // Insert the image data into a new "solustion" table for every 5th image
+            await connection.execute('INSERT INTO solustion (qustion_id, solustion_data, test_id) VALUES (?, ?, ?)', [currentSet_QuestionId, images[i],test_id]);
+            console.log(`Image content ${i} inserted successfully into solustion table for question id ${currentSet_QuestionId}`);
+        } else {
+            // Insert the image data into the existing "images" table
+            console.log(`Image content ${i} inserted successfully into images table`);
+        }
+    }
+    if (i >= 5 && (i - 5) % 6 === 0) {
+        currentSet_QuestionId++;
+    }
+}
+
+        // end-------------
+        let currentSet_QuestionId1 = 1; 
+        for (let i = 0; i < textSections.length; i++) {
+            if (textSections[i].trim().startsWith('[ans]')) {
+                const answerText = textSections[i].trim().replace('[ans]', '');
+                await connection.execute('INSERT INTO answer_text_table (answer_text, qustion_id, test_id) VALUES (?, ?, ?)', [answerText,currentSet_QuestionId1, test_id]);
+                console.log(`Answer text '${answerText}' inserted successfully into answer_text_table for question id ${currentSet_QuestionId1}`);
+            } else {
+                // Insert the text content into the "images" table as per your original code.
+                currentSet_QuestionId1++;
+                await connection.execute('INSERT INTO images (content_text, test_id) VALUES (?, ?)', [textSections[i], test_id]);
+                console.log(`Text content ${i} inserted successfully into images table`);
+             }
+            // if(i=0){
+            //     currentSet_QuestionId1++;
+            // }
+        }
+        res.send('Text content and images extracted and saved to the database with the selected topic ID successfully.');
     } catch (error) {
         console.error(error);
-        res.status(500).send('Error extracting images.');
+        res.status(500).send('Error extracting content and saving it to the database.');
     }
 });
 
-app.get('/images/:id', (req, res) => {
-    const id = req.params.id; // Use req.params.id to get the ID from the route
-
-    // Query the database to fetch images for the specified document_id
-    const selectImagesSql = 'SELECT image_data FROM img WHERE id = ?'; // Change "id" to "document_id"
-    db.query(selectImagesSql, [id], (error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Error fetching images from the database.');
-        } else {
-            // Send the images as a JSON response
-            const images = results.map(result => {
-                return {
-                    image_name: result.image_name,
-                    image_data: result.image_data.toString('base64'),
-                };
-            });
-            res.json(images);
-        }
-    });
-});
-
-
-app.get('/img', (req, res) => {
- // Use req.params.id to get the ID from the route
-
-    // Query the database to fetch images for the specified document_id
-    const selectImagesSql = 'SELECT * FROM img '; // Change "id" to "document_id"
-    db.query(selectImagesSql,(error, results) => {
-        if (error) {
-            console.error(error);
-            res.status(500).send('Error fetching images from the database.');
-        } else {
-            // Send the images as a JSON response
-            const images = results.map(result => {
-                return {
-                    image_name: result.image_name,
-                    image_data: result.image_data.toString('base64'),
-                };
-            });
-            res.json(images);
-        }
-    });
-});
-
-
 app.listen(port, () => {
-    console.log(`Server is running on port ${port}`);
+    console.log(`Server is running on http://localhost:${port}`);
 });
