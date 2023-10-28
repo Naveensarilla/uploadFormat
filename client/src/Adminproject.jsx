@@ -9,15 +9,19 @@ const Adminproject = () => {
     const [courses, setCourses] = useState([]);
     const [exams, setExams] = useState([]);
     const [subjects, setSubjects] = useState([]);
-    const [units, setUnits] = useState([]);
-    const [topics, setTopics] = useState([]);
+    // const [units, setUnits] = useState([]);
+    // const [topics, setTopics] = useState([]);
+     const [test, setTest] = useState([]);
     const [file, setFile] = useState(null);
     const [selectedCourse, setSelectedCourse] = useState('');
     const [selectedExam, setSelectedExam] = useState('');
     const [selectedSubject, setSelectedSubject] = useState('');
-    const [selectedUnit, setSelectedUnit] = useState('');
-    const [selectedTopic, setSelectedTopic] = useState('');
-    const [selectedTopicId, setSelectedTopicId] = useState(''); 
+    const [selectedTest, setSelectedTest] = useState('');
+    const [selectedTestId, setSelectedTestId] = useState(''); 
+
+    // const [selectedUnit, setSelectedUnit] = useState('');
+    // const [selectedTopic, setSelectedTopic] = useState('');
+    // const [selectedTopicId, setSelectedTopicId] = useState(''); 
     // const { course_id } = useParams();
 
     useEffect(() => {
@@ -53,32 +57,40 @@ const Adminproject = () => {
    
 
     const fetchUnits = (subjectId) => {
-        axios.get(`http://localhost:4007/quiz_units/${subjectId}`)
+        axios.get(`http://localhost:4007/test/${subjectId}`)
             .then((res) => {
-                setUnits(res.data);
+                setTest(res.data);
             })
             .catch((error) => {
-                console.error('Error fetching units:', error);
+                console.error('Error fetching test:', error);
             });
     };
+    // const fetchUnits = (subjectId) => {
+    //     axios.get(`http://localhost:4007/quiz_units/${subjectId}`)
+    //         .then((res) => {
+    //             setUnits(res.data);
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error fetching units:', error);
+    //         });
+    // };
 
-    const fetchTopics = (unitId) => {
-        axios.get(`http://localhost:4007/quiz_topics/${unitId}`)
-            .then((res) => {
-                setTopics(res.data);
-            })
-            .catch((error) => {
-                console.error('Error fetching topics:', error);
-            });
-    };
+    // const fetchTopics = (unitId) => {
+    //     axios.get(`http://localhost:4007/quiz_topics/${unitId}`)
+    //         .then((res) => {
+    //             setTopics(res.data);
+    //         })
+    //         .catch((error) => {
+    //             console.error('Error fetching topics:', error);
+    //         });
+    // };
 
     const handleCourseChange = (event) => {
         const courseId = event.target.value;
         setSelectedCourse(courseId);
         setSelectedExam('');
         setSelectedSubject('');
-        setSelectedUnit('');
-        setSelectedTopic('');
+        setSelectedTest('');
         fetchExams(courseId);
     };
 
@@ -86,29 +98,30 @@ const Adminproject = () => {
         const examId = event.target.value;
         setSelectedExam(examId);
         setSelectedSubject('');
-        setSelectedUnit('');
-        setSelectedTopic('');
+        setSelectedTest('');
         fetchSubjects(examId);
     };
 
     const handleSubjectChange = (event) => {
         const subjectId = event.target.value;
         setSelectedSubject(subjectId);
-        setSelectedUnit('');
-        setSelectedTopic('');
+        setSelectedTest('');
         fetchUnits(subjectId);
     };
-
-    const handleUnitChange = (event) => {
-        const unitId = event.target.value;
-        setSelectedUnit(unitId);
-        setSelectedTopic('');
-        fetchTopics(unitId);
+const handleTestChange = (event) => {
+        const selectedTestId = event.target.value;
+        setSelectedTestId(selectedTestId);
     };
-    const handleTopicChange = (event) => {
-        const selectedTopicId = event.target.value;
-        setSelectedTopicId(selectedTopicId);
-    };
+    // const handleUnitChange = (event) => {
+    //     const unitId = event.target.value;
+    //     setSelectedUnit(unitId);
+    //     setSelectedTopic('');
+    //     fetchTopics(unitId);
+    // };
+    // const handleTopicChange = (event) => {
+    //     const selectedTopicId = event.target.value;
+    //     setSelectedTopicId(selectedTopicId);
+    // };
 
     const handleFileChange = (e) => {
         setFile(e.target.files[0]);
@@ -117,7 +130,7 @@ const Adminproject = () => {
       const handleUpload = () => {
         const formData = new FormData();
         formData.append('document', file);
-        formData.append('topic_id', selectedTopicId);
+        formData.append('test_id', selectedTestId);
         fetch('http://localhost:4007/upload', {
           method: 'POST',
           body: formData,
@@ -188,7 +201,7 @@ const Adminproject = () => {
                 </Select>
             </FormControl>
 
-            <FormControl sx={{ m: 1, minWidth: 120 }}>
+            {/* <FormControl sx={{ m: 1, minWidth: 120 }}>
                 <Select
                     value={selectedUnit}
                     onChange={handleUnitChange}
@@ -222,7 +235,26 @@ const Adminproject = () => {
                         </MenuItem>
                     ))}
                 </Select>
-            </FormControl>
+            </FormControl> */}
+
+            
+<FormControl sx={{ m: 1, minWidth: 120 }}>
+                <Select
+                    value={selectedTest}
+                    onChange={handleTestChange}
+                    displayEmpty
+                    inputProps={{ 'aria-label': 'Without label' }}
+                >
+                    <MenuItem value="">
+                        <em>Select the Test</em>
+                    </MenuItem>
+                    {test.map((test) => (
+                        <MenuItem key={test.test_id} value={test.test_id}>
+                            {test.test}
+                        </MenuItem>
+                    ))}
+                </Select>
+            </FormControl> 
             <h1>Document Image Uploader</h1>
             <input type="file" accept=".docx" onChange={handleFileChange} />
              <button onClick={handleUpload}>Upload</button>

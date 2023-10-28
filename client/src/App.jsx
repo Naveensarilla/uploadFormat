@@ -87,11 +87,13 @@
 
 import React from 'react';
 import './App.css';
-import Adminproject from './adminproject';
+import Adminproject from './Adminproject';
+import ImageGallery from './assets/ImageGallery';
 
 function App() {
     return (
       <div className="App">
         <Adminproject />
+        {/* <ImageGallery /> */}
         </div>)}
  export default App;

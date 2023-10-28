@@ -6,7 +6,7 @@ function ImageList() {
 
   useEffect(() => {
     // Fetch images from your Express API
-    fetch(`http://localhost:5030/img`)
+    fetch(`http://localhost:4007/images/:id`)
 
       .then((response) => response.json())
       .then((data) => setImages(data))
