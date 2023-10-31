@@ -405,13 +405,42 @@ app.post('/upload', upload.single('document'), async (req, res) => {
         let currentQuestionId = 0;
         let currentAnswerText = ''; // To store the answer text
 
+        // for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
+        //     if (i < images.length) {
+        //         if (i % 6 === 0) {
+        //             currentQuestionId++;
+
+        //             // Insert the image data into the "questions" table with the current question id
+        //             await connection.execute('INSERT INTO questions (id, qustion_data, topic_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], topic_id]);
+        //             console.log(`Question content ${i} inserted successfully into questions table for question id ${currentQuestionId}`);
+        //         } else {
+        //             // Insert the image data into the existing "images" table
+        //             await connection.execute('INSERT INTO images (image_data, topic_id) VALUES (?, ?)', [images[i], topic_id]);
+        //             console.log(`Image content ${i} inserted successfully into images table`);
+        //         }
+        //     }
+
+        //     if (i < textSections.length) {
+        //         // Check for answer text marked with [ans]
+        //         if (textSections[i].trim().startsWith('[ans]')) {
+        //             // Extract and store the answer text in the "answers_table"
+        //             const answerText = textSections[i].trim().replace('[ans]', '');
+        //             await connection.execute('INSERT INTO answer_text_table (answer_text, topic_id,currentQuestionId) VALUES (?, ?)', [answerText, topic_id, currentQuestionId]);
+        //             console.log(`Answer text '${answerText}' inserted successfully into answer_text_table for topic ${topic_id}`);
+        //         } else {
+        //             // Insert the text content into the "images" table as per your original code.
+        //             await connection.execute('INSERT INTO images (content_text, topic_id) VALUES (?, ?)', [textSections[i], topic_id]);
+        //             console.log(`Text content ${i} inserted successfully into images table`);
+        //         }
+        //     }
+
         for (let i = 0; i < Math.max(textSections.length, images.length); i++) {
             if (i < images.length) {
                 if (i % 6 === 0) {
                     currentQuestionId++;
 
                     // Insert the image data into the "questions" table with the current question id
-                    await connection.execute('INSERT INTO questions (id, qustion_data, topic_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], topic_id]);
+                    await connection.execute('INSERT INTO questions (id,qustion_data, topic_id) VALUES (?, ?, ?)', [currentQuestionId, images[i], topic_id]);
                     console.log(`Question content ${i} inserted successfully into questions table for question id ${currentQuestionId}`);
                 } else {
                     // Insert the image data into the existing "images" table
@@ -423,9 +452,11 @@ app.post('/upload', upload.single('document'), async (req, res) => {
             if (i < textSections.length) {
                 // Check for answer text marked with [ans]
                 if (textSections[i].trim().startsWith('[ans]')) {
-                    // Extract and store the answer text in the "answers_table"
+                    // Extract and store the answer text in the "answer_text_table" with the same question_id
                     const answerText = textSections[i].trim().replace('[ans]', '');
-                    await connection.execute('INSERT INTO answer_text_table (answer_text, topic_id) VALUES (?, ?)', [answerText, topic_id]);
+
+                    // Use the currentQuestionId for the question_id in the answer_text_table
+                    await connection.execute('INSERT INTO answer_text_table (answer_text, topic_id, currentQuestionId) VALUES (?, ?, ?)', [answerText, topic_id, currentQuestionId]);
                     console.log(`Answer text '${answerText}' inserted successfully into answer_text_table for topic ${topic_id}`);
                 } else {
                     // Insert the text content into the "images" table as per your original code.
@@ -433,6 +464,7 @@ app.post('/upload', upload.single('document'), async (req, res) => {
                     console.log(`Text content ${i} inserted successfully into images table`);
                 }
             }
+
             // if (i < textSections.length) {
             //     // Check for answer text marked with [ans]
             //     if (textSections[i].trim().startsWith('[qtype]')) {
@@ -555,6 +587,54 @@ app.get('/api/questions', async (req, res) => {
         res.status(500).json({ error: 'Error fetching data' });
     }
 });
+
+
+
+
+
+
+
+
+app.get('/data', (req, res) => {
+    const query = `
+    SELECT t.test_id, t.test FROM test AS t JOIN test_year AS ty ON t.test_year_id = ty.test_year_id WHERE ty.test_year_id = 1;`
+
+    connection.query(query, (err, rows) => {
+        if (err) {
+            console.error('Error:', err);
+            res.status(500).json({ error: 'Internal Server Error' });
+        } else {
+
+            res.json(rows);
+        }
+    });
+
+});
+
+
+
+
+
+    // connection.query(query, (error, results) => {
+    //     if (error) {
+    //         console.error(error);
+    //         res.status(500).send('Error fetching Questions from the database.');
+    //     } else {
+    //         // Send the images as a JSON response
+    //         const questions = results.map(result => {
+    //             return {
+    //                 qustion_data: result.qustion_data.toString('base64'),
+    //             };
+    //         });
+    //         res.json(questions);
+    //     }
+    // });
+
+
+
+
+
+
 
 app.listen(port, () => {
     console.log(`Server is running on http://localhost:${port}`);
